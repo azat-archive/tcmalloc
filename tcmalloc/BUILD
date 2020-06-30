@@ -442,6 +442,35 @@ cc_library(
     alwayslink = 1,
 )
 
+# TCMalloc with 4M as max allocation size handled by front-end.
+cc_library(
+    name = "tcmalloc_4m_max_size",
+    srcs = [
+        "libc_override.h",
+        "libc_override_gcc_and_weak.h",
+        "libc_override_glibc.h",
+        "tcmalloc.cc",
+        "tcmalloc.h",
+    ],
+    copts = ["-DTCMALLOC_4M_MAX_SIZE"] + TCMALLOC_DEFAULT_COPTS,
+    linkstatic = 1,
+    visibility = ["//visibility:public"],
+    deps = tcmalloc_deps + [
+        ":common_4m_max_size",
+    ],
+    alwayslink = 1,
+)
+
+cc_library(
+    name = "common_4m_max_size",
+    srcs = common_srcs,
+    hdrs = common_hdrs,
+    copts = ["-DTCMALLOC_4M_MAX_SIZE"] + TCMALLOC_DEFAULT_COPTS,
+    linkstatic = 1,
+    deps = common_deps,
+    alwayslink = 1,
+)
+
 # TCMalloc small-but-slow is a a version of TCMalloc that chooses to minimize
 # fragmentation at a *severe* cost to performance.  It should be used by
 # applications that have significant memory constraints, but don't need to

@@ -107,7 +107,11 @@ ABSL_ATTRIBUTE_COLD ABSL_ATTRIBUTE_NOINLINE void Static::SlowInitIfNecessary() {
     threadcache_allocator_.Init(&arena_);
     cpu_cache_active_ = false;
     pagemap_.MapRootWithSmallPages();
+#ifndef TCMALLOC_4M_MAX_SIZE
     guardedpage_allocator_.Init(/*max_alloced_pages=*/64, /*total_pages=*/128);
+#else
+    guardedpage_allocator_.Init(/*max_alloced_pages=*/256, /*total_pages=*/512);
+#endif
     inited_.store(true, std::memory_order_release);
   }
 }
