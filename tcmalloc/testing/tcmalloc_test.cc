@@ -190,6 +190,9 @@ TEST(TcmallocTest, Calloc) {
       {kMaxSignedSize, 3, false},
       {3, kMaxSignedSize, false},
       {kMaxSignedSize, kMaxSignedSize, false},
+      // TCMALLOC_4M_MAX_SIZE
+      {1, 4 << 20, true},
+      {4, 1 << 20, true},
   };
 
   for (auto t : tests) {

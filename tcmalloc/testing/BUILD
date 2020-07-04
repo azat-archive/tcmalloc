@@ -133,6 +133,18 @@ cc_test(
 )
 
 cc_test(
+    name = "tcmalloc_test_4m_max_size",
+    timeout = "long",
+    srcs = ["tcmalloc_test.cc"],
+    copts = [
+        "-DTCMALLOC_4M_MAX_SIZE",
+    ] + REGTEST_OPTS,
+    linkstatic = 1,  # get the most realistic performance
+    malloc = "//tcmalloc:tcmalloc_4m_max_size",
+    deps = REGTEST_DEPS + ["@com_github_google_benchmark//:benchmark"],
+)
+
+cc_test(
     name = "tcmalloc_test_no_hp_aware",
     srcs = ["tcmalloc_test.cc"],
     copts = REGTEST_OPTS,

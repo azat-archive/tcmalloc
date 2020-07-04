@@ -226,6 +226,7 @@ void Span::BuildFreelist(size_t size, size_t count) {
   if (size > SizeMap::kMultiPageSize) {
     idxStep = size / SizeMap::kMultiPageAlignment;
   }
+  ASSERT(idxStep);
 
   // Verify that the end of the useful portion of the span (and the beginning of
   // the span waste) has an index that doesn't overflow or risk confusion with

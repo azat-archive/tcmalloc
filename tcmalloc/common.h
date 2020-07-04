@@ -64,6 +64,10 @@
 //   Used for situations where minimizing the memory footprint is the most
 //   desirable attribute, even at the cost of performance.
 //
+// TCMALLOC_4M_MAX_SIZE
+//   This configuration uses 256KB pages and maximum allocatoin (handled by
+//   front-end, i.e. w/o locking) up to 4MiB.
+//
 // The constants that vary between models are:
 //
 //   kPageShift - Shift amount used to compute the page size.
@@ -85,6 +89,8 @@
 #define TCMALLOC_PAGE_SHIFT 12
 #define TCMALLOC_USE_PAGEMAP3
 #elif defined(TCMALLOC_256K_PAGES)
+#define TCMALLOC_PAGE_SHIFT 18
+#elif defined(TCMALLOC_4M_MAX_SIZE)
 #define TCMALLOC_PAGE_SHIFT 18
 #elif defined(TCMALLOC_LARGE_PAGES)
 #define TCMALLOC_PAGE_SHIFT 15
@@ -121,10 +127,14 @@ inline constexpr size_t kMinPages = 8;
 #elif TCMALLOC_PAGE_SHIFT == 18
 inline constexpr size_t kPageShift = 18;
 inline constexpr size_t kNumClasses = 89;
+#ifndef TCMALLOC_4M_MAX_SIZE
 inline constexpr size_t kMaxSize = 256 * 1024;
+#else
+inline constexpr size_t kMaxSize = 4<<20;
+#endif
 inline constexpr size_t kMinThreadCacheSize = kMaxSize * 2;
 inline constexpr size_t kMaxThreadCacheSize = 4 << 20;
-inline constexpr size_t kMaxCpuCacheSize = 3 * 1024 * 1024;
+inline constexpr size_t kMaxCpuCacheSize = 12 * kMaxSize;
 inline constexpr size_t kDefaultOverallThreadCacheSize =
     8u * kMaxThreadCacheSize;
 inline constexpr size_t kStealAmount = 1 << 16;
@@ -235,10 +245,17 @@ inline bool IsTaggedMemory(const void* ptr) {
 // Size-class information + mapping
 class SizeMap {
  public:
+#ifndef TCMALLOC_4M_MAX_SIZE
   // All size classes <= 512 in all configs always have 1 page spans.
   static constexpr size_t kMultiPageSize = 512;
   // Min alignment for all size classes > kMultiPageSize in all configs.
   static constexpr size_t kMultiPageAlignment = 64;
+#else
+  // All size classes <= 512 in all configs always have 1 page spans.
+  static constexpr size_t kMultiPageSize = 1024;
+  // Min alignment for all size classes > kMultiPageSize in all configs.
+  static constexpr size_t kMultiPageAlignment = 128;
+#endif
   // log2 (kMultiPageAlignment)
   static constexpr size_t kMultiPageAlignmentShift =
       tcmalloc::tcmalloc_internal::Bits::Log2Ceiling(kMultiPageAlignment);
@@ -332,6 +349,9 @@ class SizeMap {
 
   // Definition of size class that is set in size_classes.cc
   static const SizeClassInfo kExperimental4kSizeClasses[kNumClasses];
+
+  // Definition of size class that is set in size_classes.cc
+  static const SizeClassInfo kExperimental4MBytesSizeClasses[kNumClasses];
 
  public:
   // Constructor should do nothing since we rely on explicit Init()

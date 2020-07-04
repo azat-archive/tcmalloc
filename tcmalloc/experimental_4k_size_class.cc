@@ -206,7 +206,11 @@ const SizeClassInfo SizeMap::kExperimental4kSizeClasses[] = {
     {   262144,       8,           2},  // 0.02%
 };
 #elif TCMALLOC_PAGE_SHIFT == 18
+#ifndef TCMALLOC_4M_MAX_SIZE
 static_assert(kMaxSize == 262144, "kMaxSize mismatch");
+#else
+static_assert(kMaxSize == 4<<20, "kMaxSize mismatch");
+#endif
 const SizeClassInfo SizeMap::kExperimental4kSizeClasses[] = {
     // <bytes>, <pages>, <batch size>    <fixed>
     {        0,       0,           0},  // +Inf%
@@ -269,10 +273,12 @@ const SizeClassInfo SizeMap::kExperimental4kSizeClasses[] = {
     {     6528,       1,          10},  // 0.41%
     {     7168,       1,           9},  // 1.61%
     {     8192,       1,           8},  // 0.02%
+#ifndef TCMALLOC_4M_MAX_SIZE
     {     8704,       1,           7},  // 0.41%
     {     9600,       1,           6},  // 1.15%
     {    10880,       1,           6},  // 0.41%
     {    11904,       1,           5},  // 0.12%
+#endif
     {    13056,       1,           5},  // 0.41%
     {    14464,       1,           4},  // 0.71%
     {    16384,       1,           4},  // 0.02%
@@ -298,6 +304,12 @@ const SizeClassInfo SizeMap::kExperimental4kSizeClasses[] = {
     {   196608,       3,           2},  // 0.01%
     {   209664,       4,           2},  // 0.03%
     {   262144,       1,           2},  // 0.02%
+#ifdef TCMALLOC_4M_MAX_SIZE
+    {  512<<10,       2,           2},
+    {    1<<20,       4,           2},
+    {    2<<20,       8,           2},
+    {    4<<20,      16,           2},
+#endif
 };
 #elif TCMALLOC_PAGE_SHIFT == 12
 static_assert(kMaxSize == 8192, "kMaxSize mismatch");
@@ -529,7 +541,11 @@ const SizeClassInfo SizeMap::kExperimental4kSizeClasses[] = {
     {   262144,       8,           2},  // 0.02%
 };
 #elif TCMALLOC_PAGE_SHIFT == 18
+#ifndef TCMALLOC_4M_MAX_SIZE
 static_assert(kMaxSize == 262144, "kMaxSize mismatch");
+#else
+static_assert(kMaxSize == 4<<20, "kMaxSize mismatch");
+#endif
 const SizeClassInfo SizeMap::kExperimental4kSizeClasses[] = {
     // <bytes>, <pages>, <batch size>    <fixed>
     {        0,       0,           0},  // +Inf%
@@ -589,10 +605,12 @@ const SizeClassInfo SizeMap::kExperimental4kSizeClasses[] = {
     {     7168,       1,           9},  // 1.61%
     {     7680,       1,           8},  // 0.41%
     {     8192,       1,           8},  // 0.02%
+#ifndef TCMALLOC_4M_MAX_SIZE
     {     8704,       1,           7},  // 0.41%
     {     9344,       1,           7},  // 0.21%
     {     9984,       1,           6},  // 1.00%
     {    10880,       1,           6},  // 0.41%
+#endif
     {    11904,       1,           5},  // 0.12%
     {    13056,       1,           5},  // 0.41%
     {    14464,       1,           4},  // 0.71%
@@ -621,6 +639,12 @@ const SizeClassInfo SizeMap::kExperimental4kSizeClasses[] = {
     {   196608,       3,           2},  // 0.01%
     {   209664,       4,           2},  // 0.03%
     {   262144,       1,           2},  // 0.02%
+#ifdef TCMALLOC_4M_MAX_SIZE
+    {  512<<10,       2,           2},
+    {    1<<20,       4,           2},
+    {    2<<20,       8,           2},
+    {    4<<20,      16,           2},
+#endif
 };
 #elif TCMALLOC_PAGE_SHIFT == 12
 static_assert(kMaxSize == 8192, "kMaxSize mismatch");
